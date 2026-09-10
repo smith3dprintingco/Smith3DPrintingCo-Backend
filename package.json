@@ -1,0 +1,13 @@
+{
+  "name": "smith3dprintingco-store",
+  "private": true,
+  "version": "1.0.0",
+  "scripts": {
+    "start": "node server.js"
+  },
+  "dependencies": {
+    "dotenv": "latest",
+    "express": "latest",
+    "stripe": "latest"
+  }
+}
