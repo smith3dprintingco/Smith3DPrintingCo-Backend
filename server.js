@@ -11,6 +11,17 @@ const port = process.env.PORT || 4242;
 const stripe = process.env.STRIPE_SECRET_KEY ? Stripe(process.env.STRIPE_SECRET_KEY) : null;
 
 app.use(express.json());
+app.use((req,res,next)=>{
+  const origin = req.headers.origin;
+  if(origin === "https://smith3dprintingco.github.io" || origin === "http://localhost:3000" || origin === "http://127.0.0.1:5500") {
+    res.setHeader("Access-Control-Allow-Origin", origin);
+  }
+  res.setHeader("Access-Control-Allow-Methods", "GET,POST,OPTIONS");
+  res.setHeader("Access-Control-Allow-Headers", "Content-Type");
+  if(req.method === "OPTIONS") return res.sendStatus(204);
+  next();
+});
+app.get("/", (req,res)=>res.json({ok:true,service:"Smith3DPrintingCo Stripe backend"}));
 app.use(express.static(__dirname));
 
 app.post("/api/create-checkout-session", async (req,res)=>{
@@ -48,8 +59,8 @@ app.post("/api/create-checkout-session", async (req,res)=>{
       line_items,
       billing_address_collection:"auto",
       shipping_address_collection:{allowed_countries:["US"]},
-      success_url:`${process.env.PUBLIC_BASE_URL || "http://localhost:"+port}/success.html`,
-      cancel_url:`${process.env.PUBLIC_BASE_URL || "http://localhost:"+port}/index.html#cartridges`,
+      success_url:`${process.env.PUBLIC_BASE_URL || "https://smith3dprintingco.github.io/Smith3DPrintingCo/"}success.html`,
+      cancel_url:`${process.env.PUBLIC_BASE_URL || "https://smith3dprintingco.github.io/Smith3DPrintingCo/"}index.html#cartridges`,
       metadata:{store:"Smith3DPrintingCo"}
     });
     res.json({url:session.url});

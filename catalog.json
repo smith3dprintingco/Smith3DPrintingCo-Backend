@@ -1,0 +1,76 @@
+{
+  "store": {
+    "name": "Smith3DPrintingCo",
+    "tagline": "3D Printed. Made for Display.",
+    "currency": "usd",
+    "contactEmail": "smith3dprintingco@gmail.com"
+  },
+  "colors": [
+    "Red",
+    "Pastel Green",
+    "Light Purple",
+    "Brass",
+    "Gold",
+    "Light Gold",
+    "Black",
+    "White"
+  ],
+  "cartridges": [
+    "7.62\u00d754",
+    ".223 / 5.56",
+    "7.62\u00d739",
+    "7.92\u00d757 Mauser",
+    "7.65\u00d721 Parabellum",
+    "9\u00d719 Parabellum",
+    "10mm AUTO",
+    ".30-06 Springfield",
+    ".40 S&W",
+    ".45 ACP",
+    ".308 Winchester",
+    ".338 Lapua Magnum",
+    ".500 S&W Magnum",
+    ".50 BMG"
+  ],
+  "products": {
+    "cartridge": {
+      "name": "3D Printed PETG Cartridge Replica",
+      "basePriceCents": 130,
+      "customTextFeeCents": 10,
+      "maxCustomText": 15,
+      "images": [
+        "assets/cartridge-hero.jpg",
+        "assets/cartridge-gallery.jpg"
+      ]
+    },
+    "shotgunShell": {
+      "name": "3D Printed PETG Shotgun Shell Replica",
+      "basePriceCents": 130,
+      "customTextFeeCents": 10,
+      "maxCustomText": 15,
+      "gauges": [
+        "12 Gauge \u2014 3 inch",
+        "20 Gauge",
+        "16 Gauge \u2014 3 inch",
+        ".410 Gauge"
+      ],
+      "images": []
+    }
+  },
+  "shipping": {
+    "originZip": "80127",
+    "packageLengthIn": 9,
+    "packageWidthIn": 6,
+    "packageWeightOz": 3,
+    "method": "server-side-carrier-rate"
+  },
+  "policies": {
+    "customerServiceEmail": "smith3dprintingco@gmail.com",
+    "returnsWindowDays": 7,
+    "customTextMaxCharacters": 15,
+    "shippingOriginZip": "80127",
+    "shippingPackage": "6 x 9 inch envelope, approximately 3 oz",
+    "shippingCountries": [
+      "US"
+    ]
+  }
+}
