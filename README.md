@@ -1,33 +1,56 @@
-# Smith3DPrintingCo website
+# Smith3DPrintingCo Stripe + EasyPost backend
 
-This package contains the GitHub Pages storefront plus the prepared Node/Express Stripe Checkout backend.
+This backend creates Stripe Checkout Sessions and can calculate USPS shipping rates through EasyPost.
 
-## Website
-Upload the website files to the existing `Smith3DPrintingCo` GitHub repository. Do not upload the ZIP itself.
+## Render environment variables
 
-Live website:
-https://smith3dprintingco.github.io/Smith3DPrintingCo/
+Required for payments:
+- `STRIPE_SECRET_KEY` — keep this private. Use `sk_test_...` for testing and `sk_live_...` for production.
 
-Customer service:
-smith3dprintingco@gmail.com
+Required for shipping:
+- `EASYPOST_API_KEY` — keep this private. Use the EasyPost test key while testing shipping.
+- `SHIPPING_FROM_NAME`
+- `SHIPPING_FROM_STREET`
+- `SHIPPING_FROM_CITY`
+- `SHIPPING_FROM_STATE`
+- `SHIPPING_FROM_ZIP=80127`
+- `SHIPPING_FROM_COUNTRY=US`
 
-## Stripe backend
-GitHub Pages is static and cannot safely store a Stripe secret key or run `server.js`. The included `server.js` is intended to be deployed to a server host such as Render, Railway, or another Node.js host.
+Optional:
+- `PUBLIC_BASE_URL=https://smith3dprintingco.github.io/Smith3DPrintingCo/`
 
-Set these environment variables on the backend host:
+## Shipping package assumptions
 
-- `STRIPE_SECRET_KEY` = your Stripe secret key (never commit this to GitHub)
-- `PUBLIC_BASE_URL` = the public URL of the backend
-- `PORT` = supplied automatically by most hosts
+The initial shipping package is:
+- 9 in long
+- 6 in wide
+- 2 in high
+- 3 oz packed weight
 
-The frontend calls `/api/create-checkout-session`. If the frontend and backend are on different domains, update `app.js` so the fetch URL points to the backend URL.
+These values are in `server.js` and can be adjusted later.
 
-## Important shipping note
-The current backend collects the customer's US shipping address. A carrier-rate service still needs to be connected before the checkout can automatically calculate a destination-based shipping charge from ZIP 80127 and the 6 x 9 inch, few-ounce package. Do not advertise that a live carrier rate is being charged until that service is connected and tested.
+## Shipping API
 
-## Stripe testing
-Use Stripe test mode first. Never paste a live Stripe secret key into `index.html`, `app.js`, GitHub, or a chat message.
+`POST /api/shipping-rates`
 
+Request body:
+```json
+{
+  "address": {
+    "name": "Customer Name",
+    "street1": "123 Main St",
+    "city": "Denver",
+    "state": "CO",
+    "zip": "80202",
+    "country": "US"
+  }
+}
+```
 
-## Stripe deployment
-Frontend API endpoint is configured for https://smith3dprintingco-backend.onrender.com. The backend requires STRIPE_SECRET_KEY in Render environment variables. Set PUBLIC_BASE_URL to https://smith3dprintingco.github.io/Smith3DPrintingCo/ if desired. Never commit secret keys.
+The endpoint creates an EasyPost shipment for rating only and returns supported USPS rates. It does not purchase postage.
+
+## Checkout API
+
+`POST /api/create-checkout-session`
+
+The existing cart format is supported. To include shipping, also send `shippingAddress` and `shippingService`. The backend recalculates the selected service's current EasyPost rate and puts that amount into Stripe Checkout. The browser never controls the shipping price.
