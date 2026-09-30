@@ -31,11 +31,20 @@ const SHIPPING = {
   fromCountry: process.env.SHIPPING_FROM_COUNTRY || "US"
 };
 
+// EasyPost's USPS service names are "GroundAdvantage", "Priority", and
+// "Express". Keep the customer-facing names friendly while matching the
+// exact service identifiers returned by EasyPost.
 const USPS_SERVICES = new Set([
-  "Ground Advantage",
+  "GroundAdvantage",
   "Priority",
-  "Priority Mail Express"
+  "Express"
 ]);
+
+const USPS_DISPLAY_NAMES = {
+  GroundAdvantage: "USPS Ground Advantage",
+  Priority: "USPS Priority Mail",
+  Express: "USPS Priority Mail Express"
+};
 
 app.use(express.json());
 app.use((req, res, next) => {
@@ -140,6 +149,7 @@ function publicRates(shipment) {
       id: rate.id,
       carrier: rate.carrier,
       service: rate.service,
+      displayName: USPS_DISPLAY_NAMES[rate.service] || `USPS ${rate.service}`,
       rate: Number(rate.rate),
       currency: rate.currency,
       deliveryDays: rate.est_delivery_days ?? rate.delivery_days ?? null,
@@ -215,7 +225,7 @@ app.post("/api/create-checkout-session", async (req, res) => {
         shipping_rate_data: {
           type: "fixed_amount",
           fixed_amount: { amount: Math.round(selected.rate * 100), currency: "usd" },
-          display_name: `${selected.carrier} ${selected.service}`,
+          display_name: selected.displayName || `${selected.carrier} ${selected.service}`,
           delivery_estimate: selected.deliveryDays ? {
             minimum: { unit: "business_day", value: Math.max(1, selected.deliveryDays) },
             maximum: { unit: "business_day", value: Math.max(1, selected.deliveryDays + 2) }
